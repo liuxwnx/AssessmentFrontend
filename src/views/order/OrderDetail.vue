@@ -8,9 +8,9 @@
       <el-descriptions-item label="客户">{{ detail.customerName || detail.customerId || '-' }}</el-descriptions-item>
       <el-descriptions-item label="商品">{{ detail.productName || detail.productId || '-' }}</el-descriptions-item>
       <el-descriptions-item label="数量">{{ detail.quantity ?? '-' }}</el-descriptions-item>
-      <el-descriptions-item label="金额">{{ detail.amount ?? '-' }}</el-descriptions-item>
+      <el-descriptions-item label="金额">{{ detail.amount != null ? formatAmount(detail.amount) : '-' }}</el-descriptions-item>
       <el-descriptions-item label="合同">{{ detail.file || '-' }}</el-descriptions-item>
-      <el-descriptions-item label="创建时间">{{ detail.createTime || '-' }}</el-descriptions-item>
+      <el-descriptions-item label="创建时间">{{ formatDateTime(detail.createTime) }}</el-descriptions-item>
       <el-descriptions-item v-if="detail.rejectReason" label="驳回原因" :span="2">
         {{ detail.rejectReason }}
       </el-descriptions-item>
@@ -47,6 +47,7 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { auditOrder, getOrderDetail } from '@/api/order'
 import { ORDER_STATUS, ORDER_STATUS_TAG } from '@/utils/constants'
+import { formatAmount, formatDateTime } from '@/utils/format'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()

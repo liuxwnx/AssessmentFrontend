@@ -17,8 +17,12 @@
         <template #default="{ row }">{{ row.productName || row.productId }}</template>
       </el-table-column>
       <el-table-column prop="quantity" label="数量" width="80" />
-      <el-table-column prop="amount" label="金额" width="110" />
-      <el-table-column prop="createTime" label="提交时间" min-width="170" />
+      <el-table-column prop="amount" label="金额" width="110">
+        <template #default="{ row }">{{ row.amount != null ? formatAmount(row.amount) : '-' }}</template>
+      </el-table-column>
+      <el-table-column prop="createTime" label="提交时间" min-width="170">
+        <template #default="{ row }">{{ formatDateTime(row.createTime) }}</template>
+      </el-table-column>
       <el-table-column label="操作" width="220" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" link @click="$router.push(`/order/detail/${row.id}`)">详情</el-button>
@@ -56,6 +60,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { auditOrder, getOrderPage } from '@/api/order'
 import { ORDER_STATUS } from '@/utils/constants'
+import { formatAmount, formatDateTime } from '@/utils/format'
 
 const loading = ref(false)
 const auditing = ref(false)

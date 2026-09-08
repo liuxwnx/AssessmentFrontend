@@ -14,7 +14,9 @@
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="productName" label="商品名称" min-width="160" />
       <el-table-column prop="currentInventory" label="当前库存" width="120" />
-      <el-table-column prop="unitPrice" label="单价" width="120" />
+      <el-table-column prop="unitPrice" label="单价" width="120">
+        <template #default="{ row }">{{ row.unitPrice != null ? formatAmount(row.unitPrice) : '-' }}</template>
+      </el-table-column>
       <el-table-column prop="createTime" label="创建时间" min-width="170" />
     </el-table>
 
@@ -36,6 +38,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { getProductPage } from '@/api/product'
+import { formatAmount } from '@/utils/format'
 
 const loading = ref(false)
 const tableData = ref([])

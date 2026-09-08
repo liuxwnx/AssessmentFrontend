@@ -16,7 +16,9 @@
       <el-table-column prop="customerPhone" label="手机号" min-width="140" />
       <el-table-column prop="companyName" label="公司名称" min-width="160" />
       <el-table-column prop="customerAddress" label="地址" min-width="200" />
-      <el-table-column prop="createTime" label="创建时间" min-width="170" />
+      <el-table-column prop="createTime" label="创建时间" min-width="170">
+        <template #default="{ row }">{{ formatDateTime(row.createTime) }}</template>
+      </el-table-column>
     </el-table>
 
     <div class="pager">
@@ -37,6 +39,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { getCustomerPage } from '@/api/customer'
+import { formatDateTime } from '@/utils/format'
 
 const loading = ref(false)
 const tableData = ref([])

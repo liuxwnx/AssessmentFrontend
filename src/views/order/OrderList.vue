@@ -33,13 +33,17 @@
         <template #default="{ row }">{{ row.productName || row.productId }}</template>
       </el-table-column>
       <el-table-column prop="quantity" label="数量" width="80" />
-      <el-table-column prop="amount" label="金额" width="110" />
+      <el-table-column prop="amount" label="金额" width="110">
+        <template #default="{ row }">{{ row.amount != null ? formatAmount(row.amount) : '-' }}</template>
+      </el-table-column>
       <el-table-column prop="status" label="状态" width="100">
         <template #default="{ row }">
           <el-tag :type="ORDER_STATUS_TAG[row.status] || 'info'">{{ row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" min-width="170" />
+      <el-table-column prop="createTime" label="创建时间" min-width="170">
+        <template #default="{ row }">{{ formatDateTime(row.createTime) }}</template>
+      </el-table-column>
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" link @click="$router.push(`/order/detail/${row.id}`)">详情</el-button>
@@ -74,6 +78,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { getOrderPage } from '@/api/order'
 import { ORDER_STATUS, ORDER_STATUS_TAG } from '@/utils/constants'
+import { formatAmount, formatDateTime } from '@/utils/format'
 
 const loading = ref(false)
 const tableData = ref([])

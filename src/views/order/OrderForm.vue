@@ -24,10 +24,10 @@
       <el-form-item label="数量" prop="quantity">
         <el-input-number v-model="form.quantity" :min="1" :max="99999" @change="calcAmount" />
       </el-form-item>
-      <el-form-item label="单价">
-        <el-input :model-value="unitPrice" disabled />
+      <el-form-item label="单价(元)">
+        <el-input :model-value="unitPrice ? formatAmount(unitPrice) : ''" disabled />
       </el-form-item>
-      <el-form-item label="金额" prop="amount">
+      <el-form-item label="金额(元)" prop="amount">
         <el-input-number v-model="form.amount" :precision="2" :min="0" :step="1" />
       </el-form-item>
       <el-form-item label="合同文件">
@@ -52,6 +52,7 @@ import { createOrder, getOrderDetail, updateOrder } from '@/api/order'
 import { getCustomerPage } from '@/api/customer'
 import { getProductPage } from '@/api/product'
 import { uploadFile } from '@/api/file'
+import { formatAmount } from '@/utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -84,8 +85,9 @@ function onProductChange(id) {
 }
 
 function calcAmount() {
-  const price = Number(unitPrice.value || 0)
-  form.amount = Number((price * Number(form.quantity || 0)).toFixed(2))
+  // 单价在数据库以分存储，表单按元计算展示
+  const priceYuan = Number(unitPrice.value || 0) / 100
+  form.amount = Number((priceYuan * Number(form.quantity || 0)).toFixed(2))
 }
 
 async function handleUpload({ file }) {
@@ -115,7 +117,8 @@ async function loadDetail() {
   form.customerId = data.customerId
   form.productId = data.productId
   form.quantity = data.quantity || 1
-  form.amount = data.amount
+  // 后端返回的金额单位是分，转为元回显
+  form.amount = data.amount != null ? Number((Number(data.amount) / 100).toFixed(2)) : 0
   form.file = data.file || ''
   onProductChange(form.productId)
 }
@@ -124,11 +127,13 @@ async function handleSubmit() {
   await formRef.value.validate()
   submitting.value = true
   try {
+    // 提交时金额转回分，与后端约定保持一致
+    const payload = { ...form, amount: Math.round(Number(form.amount) * 100) }
     if (isEdit) {
-      await updateOrder(route.params.id, { ...form })
+      await updateOrder(route.params.id, payload)
       ElMessage.success('已重新提交')
     } else {
-      await createOrder({ ...form })
+      await createOrder(payload)
       ElMessage.success('已提交，等待审批')
     }
     router.push('/order')

@@ -2,7 +2,7 @@
  * 与后端 JwtUtils.SECRET_KEY 保持一致：拦截器从该请求头读取 token
  * request.getHeader(JwtUtils.SECRET_KEY)
  */
-export const TOKEN_HEADER = 'bGl1eGlud2Vp'
+export const TOKEN_HEADER = 'token'
 
 export const TOKEN_KEY = 'assessment_token'
 export const USER_KEY = 'assessment_user'
@@ -21,7 +21,7 @@ export const ROLE_NAME = {
 export const ORDER_STATUS = {
   PENDING: '待审批',
   PASSED: '已通过',
-  REJECTED: '已拒绝'
+  REJECTED: '已驳回'
 }
 
 export const ORDER_STATUS_TAG = {
