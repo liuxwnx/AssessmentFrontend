@@ -47,6 +47,7 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { auditOrder, getOrderDetail } from '@/api/order'
 import { ORDER_STATUS, ORDER_STATUS_TAG } from '@/utils/constants'
+import { fillOrderNames } from '@/utils/nameDict'
 import { formatAmount, formatDateTime } from '@/utils/format'
 import { useUserStore } from '@/stores/user'
 
@@ -68,6 +69,7 @@ async function fetchDetail() {
   try {
     const res = await getOrderDetail(route.params.id)
     detail.value = res.data || {}
+    await fillOrderNames([detail.value])
   } finally {
     loading.value = false
   }

@@ -78,6 +78,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { getOrderPage } from '@/api/order'
 import { ORDER_STATUS, ORDER_STATUS_TAG } from '@/utils/constants'
+import { fillOrderNames } from '@/utils/nameDict'
 import { formatAmount, formatDateTime } from '@/utils/format'
 
 const loading = ref(false)
@@ -106,7 +107,7 @@ async function fetchList() {
   try {
     const res = await getOrderPage(buildParams())
     const data = res.data || {}
-    tableData.value = data.records || []
+    tableData.value = await fillOrderNames(data.records || [])
     total.value = Number(data.total || 0)
   } catch {
     tableData.value = []

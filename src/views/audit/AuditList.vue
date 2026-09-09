@@ -60,6 +60,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { auditOrder, getOrderPage } from '@/api/order'
 import { ORDER_STATUS } from '@/utils/constants'
+import { fillOrderNames } from '@/utils/nameDict'
 import { formatAmount, formatDateTime } from '@/utils/format'
 
 const loading = ref(false)
@@ -83,7 +84,7 @@ async function fetchList() {
       status: ORDER_STATUS.PENDING
     })
     const data = res.data || {}
-    tableData.value = data.records || []
+    tableData.value = await fillOrderNames(data.records || [])
     total.value = Number(data.total || 0)
   } catch {
     tableData.value = []
