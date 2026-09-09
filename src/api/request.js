@@ -25,6 +25,10 @@ request.interceptors.response.use(
     if (response.config.responseType === 'blob') {
       return response
     }
+    // 部分接口（如文件上传）直接返回字符串，不包裹 code/msg/data
+    if (typeof res === 'string') {
+      return res
+    }
     if (res && res.code !== 1) {
       ElMessage.error(res.msg || '请求失败')
       return Promise.reject(res)

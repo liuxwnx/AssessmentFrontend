@@ -34,7 +34,11 @@
         <el-upload :show-file-list="true" :limit="1" :http-request="handleUpload">
           <el-button>上传合同</el-button>
         </el-upload>
-        <div v-if="form.file" class="file-tip">已上传：{{ form.file }}</div>
+        <div v-if="form.file" class="file-tip">
+          已上传：
+          <el-link v-if="fileUrl" type="primary" :href="fileUrl" target="_blank">{{ form.file }}</el-link>
+          <span v-else>{{ form.file }}</span>
+        </div>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :loading="submitting" @click="handleSubmit">提交审批</el-button>
@@ -45,7 +49,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createOrder, getOrderDetail, updateOrder } from '@/api/order'
@@ -71,6 +75,9 @@ const form = reactive({
   file: ''
 })
 
+// 合同文件为url路径时可点击打开
+const fileUrl = computed(() => (/^https?:\/\//.test(form.file) ? form.file : ''))
+
 const rules = {
   customerId: [{ required: true, message: '请选择客户', trigger: 'change' }],
   productId: [{ required: true, message: '请选择商品', trigger: 'change' }],
@@ -92,7 +99,8 @@ function calcAmount() {
 
 async function handleUpload({ file }) {
   const res = await uploadFile(file)
-  form.file = res.data || res.msg || file.name
+  // 后端直接返回文件url路径（字符串）
+  form.file = typeof res === 'string' ? res : res?.data || file.name
   ElMessage.success('合同上传成功')
 }
 
