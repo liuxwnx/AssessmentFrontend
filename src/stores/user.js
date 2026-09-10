@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { login as loginApi } from '@/api/login'
+import { login as loginApi, logout as logoutApi } from '@/api/login'
 import { ROLE, ROLE_NAME } from '@/utils/constants'
 import { clearAuth, getToken, getUser, setToken, setUser } from '@/utils/auth'
 
@@ -30,7 +30,15 @@ export const useUserStore = defineStore('user', () => {
     return data
   }
 
-  function logout() {
+  async function logout() {
+    if (token.value) {
+      try {
+        // 先把 jwt 传给后端写入 redis 黑名单，成功后再删除本地令牌
+        await logoutApi({ token: token.value })
+      } catch {
+        // 接口失败（如网络异常）也继续本地登出，保证用户能退出
+      }
+    }
     token.value = ''
     userInfo.value = { username: '', roleId: null }
     clearAuth()

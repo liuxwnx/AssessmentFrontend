@@ -8,3 +8,13 @@ export function login(data) {
     data
   })
 }
+
+
+// 退出登录接口logout
+export function logout(data) {
+  return request({
+    url: '/logout',
+    method: 'post',
+    data
+  })
+}

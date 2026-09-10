@@ -41,7 +41,7 @@
         <div class="header-right">
           <span class="user-name">{{ userStore.userInfo.username }}</span>
           <el-tag size="small" type="info">{{ userStore.roleLabel }}</el-tag>
-          <el-button type="danger" link @click="handleLogout">退出</el-button>
+          <el-button type="danger" link :loading="loggingOut" @click="handleLogout">退出</el-button>
         </div>
       </el-header>
       <el-main class="main">
@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
@@ -72,11 +72,18 @@ const showAudit = computed(() => {
   return userStore.isManager
 })
 
+const loggingOut = ref(false)
+
 function handleLogout() {
   ElMessageBox.confirm('确认退出登录？', '提示', { type: 'warning' })
-    .then(() => {
-      userStore.logout()
-      router.push('/login')
+    .then(async () => {
+      loggingOut.value = true
+      try {
+        await userStore.logout()
+        router.push('/login')
+      } finally {
+        loggingOut.value = false
+      }
     })
     .catch(() => {})
 }
