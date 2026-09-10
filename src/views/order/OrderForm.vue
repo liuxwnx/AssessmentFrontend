@@ -56,6 +56,7 @@ import { createOrder, getOrderDetail, updateOrder } from '@/api/order'
 import { getCustomerPage } from '@/api/customer'
 import { getProductPage } from '@/api/product'
 import { uploadFile } from '@/api/file'
+import { fetchAllPages } from '@/utils/nameDict'
 import { formatAmount } from '@/utils/format'
 
 const route = useRoute()
@@ -106,12 +107,13 @@ async function handleUpload({ file }) {
 
 async function loadOptions() {
   try {
-    const [customerRes, productRes] = await Promise.all([
-      getCustomerPage({ pageNum: 1, pageSize: 200 }),
-      getProductPage({ pageNum: 1, pageSize: 200 })
+    // 拉取全部客户/商品，避免选项超出第一页时下拉框回显显示 id
+    const [customerList, productList] = await Promise.all([
+      fetchAllPages(getCustomerPage),
+      fetchAllPages(getProductPage)
     ])
-    customers.value = customerRes.data?.records || []
-    products.value = productRes.data?.records || []
+    customers.value = customerList
+    products.value = productList
   } catch {
     customers.value = []
     products.value = []
