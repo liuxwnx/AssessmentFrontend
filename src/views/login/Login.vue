@@ -2,7 +2,7 @@
   <div class="login-page">
     <el-card class="login-card" shadow="hover">
       <h2 class="title">订单管理系统</h2>
-      <p class="sub">请使用工号账号登录</p>
+      <p class="sub">请使用账号登录</p>
       <el-form ref="formRef" :model="form" :rules="rules" label-width="0" @keyup.enter="handleLogin">
         <el-form-item prop="username">
           <el-input v-model="form.username" size="large" placeholder="用户名" :prefix-icon="User" />
