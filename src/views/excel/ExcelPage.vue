@@ -65,7 +65,7 @@ const query = reactive({
 
 async function handleTemplate() {
   const res = await downloadOrderTemplate()
-  saveBlob(res.data, '订单导入模板.xlsx')
+  saveBlob(res.data, '商品导入模板.xlsx')
   ElMessage.success('模板已开始下载')
 }
 
